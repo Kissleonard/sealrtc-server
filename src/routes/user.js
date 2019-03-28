@@ -54,6 +54,11 @@ router.post('/send_code', (req, res, next) => {
   }
   region = utils.formatRegion(region);
 
+  if (Config.DEBUG) {
+    return Promise.resolve().then(function () {
+      return res.send(new APIResult(200));
+    })["catch"](next);
+  }
   let updateTime = getUpdateTime(region, phone);
   if (!_.isEmpty(updateTime)) {
     var momentNow = moment();
@@ -71,23 +76,41 @@ router.post('/send_code', (req, res, next) => {
   }).catch(next);
 });
 router.post('/verify_code', (req, res, next) => {
-  let { body: { code, phone, region, key } } = req;
-  if (_.isEmpty(region) || _.isEmpty(phone) || _.isEmpty(key) || _.isEmpty(code)) {
+  let { body: { code, phone, region, key: id } } = req;
+  if (_.isEmpty(region) || _.isEmpty(phone) || _.isEmpty(id) || _.isEmpty(code)) {
     return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.PARAMS_ILLEGAL));
   }
   region = formatRegion(region);
+
+  let name = '', portrait = '';
+  let user = {
+    id,
+    name,
+    portrait
+  };
+  if (Config.DEBUG) {
+    return getNormalToken(user).then(function (result) {
+      return res.send(new APIResult(200, Utility.encodeResults(result)));
+    })["catch"](next);
+  }
   let updateTime = getUpdateTime(region, phone);
-  if(_.isEmpty(updateTime)){
+  if (_.isEmpty(updateTime)) {
     return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.UNKOWN_PHONE));
   }
-  if(moment().subtract(2, 'm').isAfter(updateTime)){
+  if (moment().subtract(2, 'm').isAfter(updateTime)) {
     res.send(new APIResult(ResponseType.ERROR, null, ErrorType.CODE_EXPIRED));
   }
+
   return Promise.resolve().then(() => {
     let sessionId = getCode(region, phone);
-    if(_.isEqual(sessionId, code)){
-      return res.send(new APIResult(ResponseType.SUCCESS));
-    }else{
+    if (_.isEqual(sessionId, code)) {
+      return getNormalToken(user).then(function (result) {
+        let { token } = result;
+        return res.send(new APIResult(200, utils.toJSON({ token })));
+      }, (error) => {
+        return res.send(new APIResult(ResponseType.ERROR, null, utils.toJSON(error)));
+      });
+    } else {
       return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.CODE_INVALID));
     }
   }).catch(next);

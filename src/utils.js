@@ -38,8 +38,12 @@ let Cache = function () {
     remove
   };
 };
+let toJSON = (obj) => {
+  return JSON.stringify(obj);
+};
 module.exports = {
   Cache,
   APIResult,
-  formatRegion
+  formatRegion,
+  toJSON
 };
