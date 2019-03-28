@@ -31,7 +31,7 @@ let setCode = (region, phone, code) => {
 };
 let getCode = (region, phone) => {
   let codeUId = getCodeUId(region, phone);
-  return cache.get(codeUId);
+  return cache.get(codeUId) + '';
 };
 let setUpdateTime = (region, phone) => {
   let timeUId = getTimeUId(region, phone);
@@ -39,7 +39,7 @@ let setUpdateTime = (region, phone) => {
 };
 let getUpdateTime = (region, phone) => {
   let timeUId = getTimeUId(region, phone);
-  return cache.get(timeUId);
+  return cache.get(timeUId) || '';
 };
 let clear = (region, phone) => {
   [getTimeUId(region, phone), getCodeUId(region, phone)].forEach((key) => {
@@ -49,7 +49,7 @@ let clear = (region, phone) => {
 
 router.post('/send_code', (req, res, next) => {
   let { body: { region, phone } } = req;
-  if (_.isEmpty(region) || _.isEmpty(phone)) {
+  if (_.isEmpty(String(region)) || _.isEmpty(String(phone))) {
     return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.PARAMS_ILLEGAL));
   }
   region = utils.formatRegion(region);
@@ -60,7 +60,7 @@ router.post('/send_code', (req, res, next) => {
     })["catch"](next);
   }
   let updateTime = getUpdateTime(region, phone);
-  if (!_.isEmpty(updateTime)) {
+  if (!_.isEmpty(String(updateTime))) {
     var momentNow = moment();
     var subtraction = momentNow.subtract(1, 'm');
     if (subtraction.isBefore(updateTime)) {
@@ -75,26 +75,30 @@ router.post('/send_code', (req, res, next) => {
     return res.send(new APIResult(ResponseType.ERROR, null, error));
   }).catch(next);
 });
+
 router.post('/verify_code', (req, res, next) => {
   let { body: { code, phone, region, key: id } } = req;
-  if (_.isEmpty(region) || _.isEmpty(phone) || _.isEmpty(id) || _.isEmpty(code)) {
+  if (_.isEmpty(String(region)) || _.isEmpty(String(phone)) || _.isEmpty(String(id)) || _.isEmpty(String(code))) {
     return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.PARAMS_ILLEGAL));
   }
-  region = formatRegion(region);
+  region = utils.formatRegion(region);
 
-  let name = '', portrait = '';
+  let name = 'tester', portrait = 'tester';
   let user = {
     id,
     name,
     portrait
   };
   if (Config.DEBUG) {
-    return getNormalToken(user).then(function (result) {
-      return res.send(new APIResult(200, Utility.encodeResults(result)));
+    return getNormalToken(user).then(function ({ token }) {
+      clear(region, phone);
+      return res.send(new APIResult(200, { token }));
+    }, (error) => {
+      return res.send(new APIResult(ResponseType.ERROR, null, error));
     })["catch"](next);
   }
   let updateTime = getUpdateTime(region, phone);
-  if (_.isEmpty(updateTime)) {
+  if (_.isEmpty(String(updateTime))) {
     return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.UNKOWN_PHONE));
   }
   if (moment().subtract(2, 'm').isAfter(updateTime)) {
@@ -104,11 +108,12 @@ router.post('/verify_code', (req, res, next) => {
   return Promise.resolve().then(() => {
     let sessionId = getCode(region, phone);
     if (_.isEqual(sessionId, code)) {
+      clear(region, phone);
       return getNormalToken(user).then(function (result) {
         let { token } = result;
-        return res.send(new APIResult(200, utils.toJSON({ token })));
+        return res.send(new APIResult(200, { token }));
       }, (error) => {
-        return res.send(new APIResult(ResponseType.ERROR, null, utils.toJSON(error)));
+        return res.send(new APIResult(ResponseType.ERROR, null, error));
       });
     } else {
       return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.CODE_INVALID));
