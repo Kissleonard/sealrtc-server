@@ -1,8 +1,8 @@
-const ResponseType = {
+var ResponseType = {
   SUCCESS: 200,
   ERROR: 400
 };
-const ErrorType = {
+var ErrorType = {
   PARAMS_ILLEGAL: '参数非法',
   EXCEEDED: '调用频率过快',
   UNKOWN_PHONE: '未知手机号',

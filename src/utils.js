@@ -21,24 +21,24 @@ var formatRegion = function (region) {
   return region;
 };
 
-let Cache = function () {
-  let cache = {};
-  let set = (key, value) => {
+var Cache = function () {
+  var cache = {};
+  var set = (key, value) => {
     cache[key] = value;
   };
-  let get = (key) => {
+  var get = (key) => {
     return cache[key];
   };
-  let remove = (key) => {
+  var remove = (key) => {
     delete cache[key];
   };
   return {
-    set,
-    get,
-    remove
+    set: set,
+    get: get,
+    remove: remove
   };
 };
-let toJSON = (obj) => {
+var toJSON = (obj) => {
   return JSON.stringify(obj);
 };
 module.exports = {
