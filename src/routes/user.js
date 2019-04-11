@@ -7,7 +7,7 @@ var Cache = utils.Cache;
 
 var Enum = require('../enum');
 var ResponseType = Enum.ResponseType;
-var ErrorType = Enum.ErrorType;
+var ErrorMessage = Enum.ErrorMessage;
 
 var SMS = require('../sms');
 var sendCode = SMS.sendCode;
@@ -62,7 +62,7 @@ router.post('/send_code', (req, res, next) => {
   var phone = body.phone;
 
   if (_.isEmpty(String(region)) || _.isEmpty(String(phone))) {
-    return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.PARAMS_ILLEGAL));
+    return res.send(new APIResult(ResponseType.PARAMS_ILLEGAL, null, ErrorMessage.PARAMS_ILLEGAL));
   }
   region = utils.formatRegion(region);
 
@@ -76,7 +76,7 @@ router.post('/send_code', (req, res, next) => {
     var momentNow = moment();
     var subtraction = momentNow.subtract(1, 'm');
     if (subtraction.isBefore(updateTime)) {
-      return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.EXCEEDED));
+      return res.send(new APIResult(ResponseType.EXCEEDED, null, ErrorMessage.EXCEEDED));
     }
   }
   return sendCode(region, phone).then((result) => {
@@ -85,7 +85,7 @@ router.post('/send_code', (req, res, next) => {
     setUpdateTime(region, phone);
     return res.send(new APIResult(ResponseType.SUCCESS));
   }, error => {
-    return res.send(new APIResult(ResponseType.ERROR, null, error));
+    return res.send(new APIResult(ResponseType.CODE_SEND_FAILED, null, error));
   }).catch(next);
 });
 
@@ -96,7 +96,7 @@ router.post('/verify_code', (req, res, next) => {
   var code = body.code;
   var id = body.key;
   if (_.isEmpty(String(region)) || _.isEmpty(String(phone)) || _.isEmpty(String(id)) || _.isEmpty(String(code))) {
-    return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.PARAMS_ILLEGAL));
+    return res.send(new APIResult(ResponseType.PARAMS_ILLEGAL, null, ErrorMessage.PARAMS_ILLEGAL));
   }
   region = utils.formatRegion(region);
 
@@ -110,17 +110,17 @@ router.post('/verify_code', (req, res, next) => {
     return getNormalToken(user).then(function (result) {
       clear(region, phone);
       var token = result.token;
-      return res.send(new APIResult(200, { token: token }));
+      return res.send(new APIResult(ResponseType.SUCCESS, { token: token }));
     }, (error) => {
-      return res.send(new APIResult(ResponseType.ERROR, null, error));
+      return res.send(new APIResult(ResponseType.GET_IM_TOKEN_FAILED, null, error));
     })["catch"](next);
   }
   var updateTime = getUpdateTime(region, phone);
   if (_.isEmpty(String(updateTime))) {
-    return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.UNKOWN_PHONE));
+    return res.send(new APIResult(ResponseType.UNKOWN_PHONE, null, ErrorMessage.UNKOWN_PHONE));
   }
   if (moment().subtract(2, 'm').isAfter(updateTime)) {
-    res.send(new APIResult(ResponseType.ERROR, null, ErrorType.CODE_EXPIRED));
+    res.send(new APIResult(ResponseType.CODE_EXPIRED, null, ErrorMessage.CODE_EXPIRED));
   }
 
   return Promise.resolve().then(() => {
@@ -131,10 +131,10 @@ router.post('/verify_code', (req, res, next) => {
         var token = result.token;
         return res.send(new APIResult(200, { token: token }));
       }, (error) => {
-        return res.send(new APIResult(ResponseType.ERROR, null, error));
+        return res.send(new APIResult(ResponseType.GET_IM_TOKEN_FAILED, null, error));
       });
     } else {
-      return res.send(new APIResult(ResponseType.ERROR, null, ErrorType.CODE_INVALID));
+      return res.send(new APIResult(ResponseType.CODE_INVALID, null, ErrorMessage.CODE_INVALID));
     }
   }).catch(next);
 });
