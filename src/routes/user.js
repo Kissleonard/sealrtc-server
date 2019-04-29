@@ -20,7 +20,7 @@ var Config = require('../conf');
 var RongSDK = require('rongcloud-sdk')({
   appkey: Config.RONGCLOUD_APPKEY,
   secret: Config.RONGCLOUD_SECRET,
-  url: Config.RONGCLOUD_SERVER_API
+  api: Config.RONGCLOUD_SERVER_API || 'http://api.cn.ronghub.com'
 });
 var User = RongSDK.User;
 var cache = Cache();
