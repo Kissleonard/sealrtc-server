@@ -8,4 +8,4 @@
 
 > 3、按需修改 src/conf.js 
 
-> 4、启动服务 `npm run server`
+> 4、启动服务 `npm run serve`
