@@ -17,6 +17,10 @@ var _ = require('underscore');
 var moment = require('moment');
 var Config = require('../conf');
 
+const adminReport = require('../admin-report'),
+  reportRegister = adminReport.reportRegister;
+
+
 var RongSDK = require('rongcloud-sdk')({
   appkey: Config.RONGCLOUD_APPKEY,
   secret: Config.RONGCLOUD_SECRET,
@@ -111,6 +115,7 @@ router.post('/verify_code', (req, res, next) => {
     return getNormalToken(user).then(function (result) {
       clear(region, phone);
       var token = result.token;
+      reportRegister(phone, region); //开发环境不记录
       return res.send(new APIResult(ResponseType.SUCCESS, { token: token }));
     }, (error) => {
       return res.send(new APIResult(ResponseType.GET_IM_TOKEN_FAILED, null, error));
@@ -129,6 +134,7 @@ router.post('/verify_code', (req, res, next) => {
     if (_.isEqual(sessionId, code)) {
       clear(region, phone);
       return getNormalToken(user).then(function (result) {
+        reportRegister(phone, region);
         var token = result.token;
         return res.send(new APIResult(200, { token: token }));
       }, (error) => {
