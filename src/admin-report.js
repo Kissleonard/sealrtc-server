@@ -6,7 +6,7 @@ const https = require('https'),
 
 const DEMO_TYPE = 2; // SealRTC
 
-const ADMIN_REPORT_URL = 'admin.rongcloud.net',
+const ADMIN_REPORT_URL = 'admin.rongcloud.cn',
   ADMIN_REPORT_PATH = '/demoApi/sendData';
 
 const request = (options) => {
