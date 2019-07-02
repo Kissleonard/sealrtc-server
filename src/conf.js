@@ -8,5 +8,10 @@ module.exports = {
   // https://www.yunpian.com/entry DEBUG 为 true 此项可为空
   YUNPIAN_API_KEY: '',
   // Server 端口，按需调整
-  SERVER_PORT: '8585'
+  SERVER_PORT: '8585',
+  // MediaServer 地址
+  MEDIASERVERS: [{
+    name: '',
+    url: ''
+  }]
 };

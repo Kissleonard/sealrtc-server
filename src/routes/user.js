@@ -145,4 +145,13 @@ router.post('/verify_code', (req, res, next) => {
     }
   }).catch(next);
 });
+
+router.get('/configuration', (req, res, next) => {
+  return Promise.resolve().then(function () {
+    return res.send(new APIResult(ResponseType.SUCCESS, {
+      mediaservers: Config.MEDIASERVERS
+    }));
+  }).catch(next);;
+});
+
 module.exports = router;
