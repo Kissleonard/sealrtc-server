@@ -13,5 +13,17 @@ module.exports = {
   MEDIASERVERS: [{
     name: '',
     url: ''
-  }]
+  }],
+  CONF: {
+    client: {
+      iOS: {
+        version: '3.0.9',
+        url: ''
+      },
+      android: {
+        version: '3.0.9',
+        url: ''
+      }
+    }
+  }
 };
