@@ -1,8 +1,7 @@
 /* 
 此文件实现融云注册统计功能, 开发者可忽略
  */
-var https = require('https'),
-  qs = require('querystring');
+var https = require('https');
 
 var DEMO_TYPE = 2; // SealRTC
 
