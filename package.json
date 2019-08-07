@@ -20,7 +20,7 @@
   "author": "yuhongda@rongcloud.cn",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^5.9.0"
+    "eslint": "^6.1.0"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
