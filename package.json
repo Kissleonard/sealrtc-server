@@ -20,12 +20,13 @@
   "author": "yuhongda@rongcloud.cn",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^6.1.0"
+    "eslint": "^5.9.0"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
+    "express-content-type-override": "^1.1.0",
     "moment": "^2.24.0",
     "rongcloud-sdk": "^3.0.1",
     "underscore": "^1.9.1"

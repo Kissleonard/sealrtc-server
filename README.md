@@ -9,3 +9,25 @@
 > 3、按需修改 src/conf.js 
 
 > 4、启动服务 `npm run serve`
+
+#### 部署
+
+建议使用 `pm2` 部署
+
+**安装:**
+
+```js
+npm install pm2 -g
+```
+
+**运行:**
+
+```js
+pm2 start src/index.js --name sealrtc-server
+```
+
+**查看:**
+
+```js
+pm2 list
+```

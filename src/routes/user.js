@@ -12,12 +12,14 @@ var ErrorMessage = Enum.ErrorMessage;
 var SMS = require('../sms');
 var sendCode = SMS.sendCode;
 
+var utils = require('../utils');
 var _ = require('underscore');
 var moment = require('moment');
 var Config = require('../conf');
 
 const adminReport = require('../admin-report'),
   reportRegister = adminReport.reportRegister;
+
 
 var RongSDK = require('rongcloud-sdk')({
   appkey: Config.RONGCLOUD_APPKEY,
@@ -72,7 +74,7 @@ router.post('/send_code', (req, res, next) => {
   if (Config.DEBUG) {
     return Promise.resolve().then(function () {
       return res.send(new APIResult(200));
-    })['catch'](next);
+    })["catch"](next);
   }
   var updateTime = getUpdateTime(region, phone);
   if (!_.isEmpty(String(updateTime))) {
@@ -117,7 +119,7 @@ router.post('/verify_code', (req, res, next) => {
       return res.send(new APIResult(ResponseType.SUCCESS, { token: token }));
     }, (error) => {
       return res.send(new APIResult(ResponseType.GET_IM_TOKEN_FAILED, null, error));
-    })['catch'](next);
+    })["catch"](next);
   }
   var updateTime = getUpdateTime(region, phone);
   if (_.isEmpty(String(updateTime))) {
@@ -149,7 +151,7 @@ router.get('/configuration', (req, res, next) => {
     return res.send(new APIResult(ResponseType.SUCCESS, {
       mediaservers: Config.MEDIASERVERS
     }));
-  }).catch(next);
+  }).catch(next);;
 });
 
 module.exports = router;
