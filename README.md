@@ -14,19 +14,19 @@
 
 建议使用 `pm2` 部署
 
-**安装:**
+> 安装:
 
 ```js
 npm install pm2 -g
 ```
 
-**运行:**
+> 运行:
 
 ```js
 pm2 start src/index.js --name sealrtc-server
 ```
 
-**查看:**
+> 查看:
 
 ```js
 pm2 list
