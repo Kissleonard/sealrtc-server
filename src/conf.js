@@ -9,11 +9,6 @@ module.exports = {
   YUNPIAN_API_KEY: '',
   // Server 端口，按需调整
   SERVER_PORT: '8585',
-  // MediaServer 地址
-  MEDIASERVERS: [{
-    name: '',
-    url: ''
-  }],
   CONF: {
     client: {
       iOS: {
